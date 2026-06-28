@@ -1,0 +1,91 @@
+---
+import Navbar from "../components/Navbar.astro";
+import Brand from "../components/Brand.astro";
+---
+
+<header>
+	
+	<Brand />
+
+	<Navbar />
+</header>
+<main class="container">
+	<section class="featured-posts">
+		<h2>Featured Posts</h2>
+		<!--Probably call a component to act as a featured post; container is grid for even spaces-->
+		<div class="post-grid">
+			<div class="post-card">
+				<img src="#" alt="#"/>
+				<div class="card-content">
+					<h3>title placeholder</h3>
+					<p>description</p>
+					<p>
+						<a href="#">
+							read more
+						</a>
+					</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="theme-tags">
+		<h2>Themes</h2>
+		<!--They should look like pills, probably another component 
+		if we want it to sync with changes.-->
+	</section>
+
+	<section class="author-introduction">
+		<h2>About the Author</h2>
+		<div class="author-card">
+			<div class="author-image">
+				<img src="#" alt="#"/>		
+				<h3>Author's name</h3>
+			</div>
+
+			<div class="author-card-content">
+				<p>Welcome & Introduction</p>
+			</div>
+		</div>
+		
+		<!--Will add an arrow at the end so user will be guided that there is more; flex due to format, grid is also possible.-->
+	</section>
+
+	<section class="recent-posts">
+		<h2>Recent Posts</h2>
+		<!--Same with featured posts, but will make this time related; grid-->
+		
+		<div class="post-grid">
+			<div class="post-card">
+				<img src="#" alt="#"/>
+				<div class="card-content">
+					<h3>title placeholder</h3>
+					<p>description</p>
+					<p>
+						<a href="#">
+							read more
+						</a>
+					</p>
+				</div>
+			</div>
+		</div>
+	</section>
+</main>
+<footer>
+    <p>&copy; 2026 Coffee Break</p>
+</footer>
+
+<!--
+	Header is a container, use display : flex for formatting
+	to allow it to control child (brand-banner, nav).
+	nav uses display: flex, while coloured-block won't need to. 
+	
+	Don't forget box-sizing: border-box; for better prediction
+	and responsiveness.
+
+	container class = use grid for proper formatting, easier
+	to modify than flex in the situation.
+
+	featured-posts = use grid also, makes spacing more even.
+	theme-tags = display flex so if it overflows it is more responsive.
+-->
