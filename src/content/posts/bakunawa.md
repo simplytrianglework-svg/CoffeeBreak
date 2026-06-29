@@ -6,6 +6,7 @@ date: 2026-06-29
 featured: true
 tags: ["Mythology"]
 category: "Story"
+audio: "/audio/bakunawa.mp3"
 ---
 
 Your poem or story content goes here.

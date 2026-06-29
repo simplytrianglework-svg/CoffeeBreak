@@ -4,7 +4,7 @@ import Footer from "../components/Footer.astro";
 import "../styles/global.css";
 import { getCollection } from "astro:content";
 
-const { title } = Astro.props;
+const { title, fullWidth = false } = Astro.props;
 
 const allPosts = await getCollection("posts");
 const categories = [...new Set(allPosts.map(post => post.data.category).filter(Boolean))];
@@ -20,8 +20,6 @@ const categories = [...new Set(allPosts.map(post => post.data.category).filter(B
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Fraunces:ital,wght@0,300;0,400;1,300;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
-
-    <link rel="stylesheet" href="/styles/global.css"/>
 </head>
 <body>
 
@@ -52,7 +50,7 @@ const categories = [...new Set(allPosts.map(post => post.data.category).filter(B
         </nav>
     </aside>
 
-    <!-- Overlay (darkens page when sidebar opens on mobile) -->
+    <!-- Overlay -->
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
     <!-- Page wrapper -->
@@ -62,7 +60,7 @@ const categories = [...new Set(allPosts.map(post => post.data.category).filter(B
             <Navbar />
         </header>
 
-        <main class="container">
+        <main class={fullWidth ? "container-full" : "container"}>
             <slot />
         </main>
 
@@ -75,32 +73,26 @@ const categories = [...new Set(allPosts.map(post => post.data.category).filter(B
         const overlay = document.getElementById("sidebar-overlay");
         const closeBtn = document.getElementById("sidebar-close");
 
-        // Open sidebar
         hamburger.addEventListener("click", () => {
             sidebar.classList.add("open");
             overlay.classList.add("open");
         });
 
-        // Close via X button
         closeBtn.addEventListener("click", () => {
             sidebar.classList.remove("open");
             overlay.classList.remove("open");
         });
 
-        // Close via overlay click
         overlay.addEventListener("click", () => {
             sidebar.classList.remove("open");
             overlay.classList.remove("open");
         });
 
-        // Category dropdowns
         const categories = document.querySelectorAll(".sidebar-category");
-
         categories.forEach(category => {
             category.addEventListener("click", () => {
                 const categoryId = category.getAttribute("data-category");
                 const topics = document.getElementById(`topics-${categoryId}`);
-
                 category.classList.toggle("active");
                 topics.classList.toggle("open");
             });

@@ -12,13 +12,66 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
+const hasAudio = !!post.data.audio;
 ---
 
 <BaseLayout title={post.data.title}>
-    <article class="post-content">
-        <h2>{post.data.title}</h2>
-        <p>{post.data.description}</p>
-        <img src={post.data.image} alt={post.data.title} />
-        <Content />
+
+    <div class="progress-bar" id="progress-bar"></div>
+
+    <article class="post-content-card">
+
+        {hasAudio && (
+            <button class="audio-toggle" id="audio-toggle" title="Listen to this post">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                </svg>
+            </button>
+        )}
+
+        {hasAudio && (
+            <div class="audio-panel" id="audio-panel">
+                <audio controls src={post.data.audio} class="audio-element">
+                    Your browser does not support audio.
+                </audio>
+            </div>
+        )}
+
+        <div class="post-header">
+            <h2>{post.data.title}</h2>
+            <p class="post-description">{post.data.description}</p>
+        </div>
+
+        <div class="post-cover-wrapper">
+            <img src={post.data.image} alt={post.data.title} class="post-cover"/>
+        </div>
+        
+        <div class="post-body">
+            <Content />
+        </div>
+
     </article>
+
 </BaseLayout>
+
+<script>
+    const bar = document.getElementById("progress-bar");
+    window.addEventListener("scroll", () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = (scrollTop / docHeight) * 100;
+        bar.style.width = `${progress}%`;
+    });
+
+    const toggleBtn = document.getElementById("audio-toggle");
+    const audioPanel = document.getElementById("audio-panel");
+
+    if (toggleBtn && audioPanel) {
+        toggleBtn.addEventListener("click", () => {
+            audioPanel.classList.toggle("open");
+            toggleBtn.classList.toggle("active");
+        });
+    }
+</script>

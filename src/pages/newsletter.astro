@@ -11,23 +11,23 @@ const recentPosts = allPosts.sort((a, b) => b.data.date - a.data.date).slice(0, 
 <BaseLayout title="Newsletter">
     <Brand />
 
-    <section class="newsletter-primary-content">
-        <h2>Our Daily Scope</h2>
-        <p>Placeholder</p>
+    <div class="newsletter-card">
+        <section class="newsletter-primary-content">
+            <h2>Our Daily Scope</h2>
+            <p>Placeholder</p>
+            <div class="newsletter-related-container">
+                <img src="#" alt="newsletter illustration"/>
+            </div>
+            <p>placeholder</p>
+        </section>
 
-        <div class="newsletter-related-container">
-            <img src="#" alt="newsletter illustration"/>
-        </div>
-
-        <p>placeholder</p>
-    </section>
-
-    <section class="newsletter-promotions">
-        <div class="newsletter-related-container">
-            <img src="#" alt="promotion banner"/>
-        </div>
-        <p>Placeholder</p>
-    </section>
+        <section class="newsletter-promotions">
+            <div class="newsletter-related-container">
+                <img src="#" alt="promotion banner"/>
+            </div>
+            <p>Placeholder</p>
+        </section>
+    </div>
 
     <section class="recent-posts">
         <h2>Recent Posts</h2>

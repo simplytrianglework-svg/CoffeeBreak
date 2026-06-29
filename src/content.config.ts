@@ -11,6 +11,7 @@ const posts = defineCollection({
         featured: z.boolean().optional(),
         tags: z.array(z.string()).optional(),
         category: z.string().optional(),    
+        audio: z.string().optional(),
     }),
 });
 
