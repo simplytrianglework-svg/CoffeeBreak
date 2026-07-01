@@ -1,6 +1,15 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Brand from "../components/Brand.astro";
+import { getCollection } from "astro:content";
+
+// Small, real numbers instead of more placeholder text — pulled live
+// from the same post data driving the Bookshelf, so this stays
+// accurate without any manual upkeep as new stories go up.
+const allPosts = await getCollection("posts");
+const storyCount = allPosts.length;
+const categoryCount = new Set(allPosts.map(post => post.data.category).filter(Boolean)).size;
+const themeCount = new Set(allPosts.flatMap(post => post.data.tags ?? [])).size;
 ---
 
 <BaseLayout title="About">
@@ -8,48 +17,133 @@ import Brand from "../components/Brand.astro";
     <div class="about-card">
         <div class="author-profile-card">
             <div class="author-profile-image">
-                <!-- FIXED: alt="#" is read aloud by screen readers as
-                     "hash" or skipped unpredictably. Once you have a
-                     real photo, give it a real alt like "Rye, author
-                     of Coffee Break". -->
-                <img src="#" alt="Author portrait, to be added"/>
+                <!-- Placeholder monogram in place of a broken image
+                     reference. Swap this whole div for a real portrait
+                     once you have one:
+                     <img src="/images/author.jpg" alt="[Your name], author of Coffee Break" /> -->
+                <div class="author-photo-placeholder" aria-hidden="true">
+                    <span>CB</span>
+                </div>
             </div>
 
             <div class="profile-card-content">
                 <div class="author-introduction">
-                    <h2>Author Name</h2>
-                    <p>Author description</p>
+                    <h2>Hi, I'm simplytriangle</h2>
+                    <p>
+                        I write short stories, poetry, and the occasional
+                        deep-dive analysis — most of it circling back to
+                        the myths and folklore I grew up hearing,
+                        retold, reimagined, and every so often gently
+                        interrogated. Coffee Break is where I keep it all.
+                    </p>
+                </div>
+
+                <div class="author-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">{storyCount}</span>
+                        <span class="stat-label">{storyCount === 1 ? "Story" : "Stories"} Published</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">{categoryCount}</span>
+                        <span class="stat-label">{categoryCount === 1 ? "Category" : "Categories"}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">{themeCount}</span>
+                        <span class="stat-label">{themeCount === 1 ? "Theme" : "Themes"} Explored</span>
+                    </div>
+                </div>
+
+                <div class="author-now-writing">
+                    <span class="now-writing-dot" aria-hidden="true"></span>
+                    <div>
+                        <span class="now-writing-label">Currently writing</span>
+                        <p class="now-writing-title">Placeholder — "The Weight of Unspoken Names," a short story about a sibling of the Bakunawa</p>
+                    </div>
                 </div>
 
                 <div class="author-interests">
-                    <h3>Author's Interest</h3>
+                    <h3>What I'm Into</h3>
                     <ul class="author-interest-list">
-                        <li class="interest-item">placeholder</li>
+                        <li class="interest-item">Philippine mythology</li>
+                        <li class="interest-item">Folklore &amp; oral tradition</li>
+                        <li class="interest-item">Stargazing</li>
+                        <li class="interest-item">Poetry</li>
+                        <li class="interest-item">Old libraries</li>
+                        <li class="interest-item">Slow mornings with coffee</li>
                     </ul>
                 </div>
 
                 <div class="author-experiences">
-                    <h3>Author's Experience</h3>
-                    <p>experience description</p>
+                    <h3>A Little Backstory</h3>
+                    <p>
+                        Placeholder — talk about how you started writing,
+                        what draws you back to myth and folklore again
+                        and again, and what Coffee Break means to you.
+                        A line or two on where you've been published,
+                        workshops you've taken, or writing communities
+                        you're part of fits nicely here too.
+                    </p>
+                </div>
+
+                <div class="author-milestones">
+                    <h3>Milestones</h3>
+                    <ol class="milestone-list">
+                        <li class="milestone-item">
+                            <span class="milestone-year">2023</span>
+                            <span class="milestone-text">Placeholder — Coffee Break goes live with its first retelling.</span>
+                        </li>
+                        <li class="milestone-item">
+                            <span class="milestone-year">2024</span>
+                            <span class="milestone-text">Placeholder — first piece featured in a folklore anthology or zine.</span>
+                        </li>
+                        <li class="milestone-item">
+                            <span class="milestone-year">2025</span>
+                            <span class="milestone-text">Placeholder — crossed 20 published stories; started taking commissions.</span>
+                        </li>
+                        <li class="milestone-item">
+                            <span class="milestone-year">2026</span>
+                            <span class="milestone-text">Placeholder — whatever you're proudest of this year goes here.</span>
+                        </li>
+                    </ol>
                 </div>
 
                 <div class="author-links">
-                    <h3>Social Platforms</h3>
-                    <p>Willing to communicate with me?</p>
+                    <h3>Let's Talk</h3>
+                    <p>Got a story recommendation, a correction on a retelling, or just want to say hi?</p>
                     <ul class="social-links">
                         <li class="social-link-item">
-                            <a href="#">
-                                Placeholder
+                            <a href="mailto:hello@example.com">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+                                Email
+                            </a>
+                        </li>
+                        <li class="social-link-item">
+                            <a href="#" target="_blank" rel="noopener noreferrer">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><path d="M17.5 6.5h.01"/></svg>
+                                Instagram
+                            </a>
+                        </li>
+                        <li class="social-link-item">
+                            <a href="#" target="_blank" rel="noopener noreferrer">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l7.07 9.43L4.5 20h2.02l6.02-5.71L17.5 20H20l-7.4-9.87L19.5 4h-2.02l-5.51 5.23L7 4H4z"/></svg>
+                                Twitter / X
+                            </a>
+                        </li>
+                        <li class="social-link-item">
+                            <a href="#" target="_blank" rel="noopener noreferrer">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                                Goodreads
                             </a>
                         </li>
                     </ul>
 
                     <div class="work-cta">
-                        <a href="#">Interested to work with me? Click here</a>
+                        <a href="/work-with-me">Interested in working with me? →</a>
+                        <a href="/bookshelf">Browse the Bookshelf →</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
+
 </BaseLayout>

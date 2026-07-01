@@ -15,19 +15,37 @@ const recentPosts = [...allPosts].sort((a, b) => b.data.date - a.data.date).slic
     <div class="newsletter-card">
         <section class="newsletter-primary-content">
             <h2>Our Daily Scope</h2>
-            <p>Placeholder</p>
+            <p>
+                A short letter from Coffee Break — new stories before
+                they're posted anywhere else, the folklore rabbit holes
+                behind them, and the occasional stray thought that
+                never made it into a full piece.
+            </p>
+
+            <ul class="newsletter-perks">
+                <li class="newsletter-perk">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.2 7.8 2.9-2.9"/><path d="M18 12h4"/><path d="m16.2 16.2 2.9 2.9"/><path d="M12 18v4"/><path d="m4.9 19.1 2.9-2.9"/><path d="M2 12h4"/><path d="m4.9 4.9 2.9 2.9"/></svg>
+                    <span>New stories and poems first — before the Bookshelf</span>
+                </li>
+                <li class="newsletter-perk">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                    <span>The myth or folklore behind each piece</span>
+                </li>
+                <li class="newsletter-perk">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span>Sent roughly once a month, never more</span>
+                </li>
+            </ul>
+
             <div class="newsletter-related-container">
-                <img src="#" alt="newsletter illustration"/>
+                <div class="newsletter-illustration-placeholder" aria-hidden="true">
+                    <span>Placeholder — cover illustration or issue preview</span>
+                </div>
             </div>
-            <p>placeholder</p>
 
             <!--
-                A page literally named "Newsletter" had no subscribe
-                form — just text and a recent-posts grid. This is a
-                bare functional skeleton, not styled or wired to a
-                real endpoint. Since your content strategy already
-                banks posts on Beehiiv, swap the form action below for
-                your actual Beehiiv embed/API endpoint when ready.
+                Swap the form action below for your actual Beehiiv
+                embed/API endpoint when ready.
             -->
             <form class="newsletter-signup" action="#" method="post">
                 <label for="newsletter-email" class="sr-only">Email address</label>
@@ -40,13 +58,21 @@ const recentPosts = [...allPosts].sort((a, b) => b.data.date - a.data.date).slic
                 />
                 <button type="submit">Subscribe</button>
             </form>
+            <p class="newsletter-fineprint">No spam, ever. Unsubscribe with one click.</p>
         </section>
 
         <section class="newsletter-promotions">
-            <div class="newsletter-related-container">
-                <img src="#" alt="promotion banner"/>
+            <h3>While You Wait</h3>
+            <div class="newsletter-promo-links">
+                <a href="/bookshelf" class="newsletter-promo-card">
+                    <span class="newsletter-promo-title">Browse the Bookshelf</span>
+                    <span class="newsletter-promo-desc">Every story, poem, and analysis published so far.</span>
+                </a>
+                <a href="/work-with-me" class="newsletter-promo-card">
+                    <span class="newsletter-promo-title">Work With Me</span>
+                    <span class="newsletter-promo-desc">Commissions, collaborations, and freelance writing.</span>
+                </a>
             </div>
-            <p>Placeholder</p>
         </section>
     </div>
 

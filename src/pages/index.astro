@@ -76,16 +76,18 @@ const themes = [...new Set(allPosts.flatMap(post => post.data.tags ?? []))].sort
 		<h2>About the Author</h2>
 		<div class="author-card">
 			<div class="author-image">
-				<img src="#" alt="#"/>		
+				<div class="author-image-placeholder" aria-hidden="true">
+					<span>ST</span>
+				</div>
 			</div>
 
 			<div class="author-card-content">
-				<h3>Author's name</h3>
-				<p>Welcome & Introduction</p>
+				<h3>simplytriangle</h3>
+				<p>Placeholder — a short welcome. I write short stories, poetry, and folklore-driven analysis, most of it circling back to myths I grew up hearing.</p>
 			</div>
+
+			<a href="/about" class="author-card-button">About Me →</a>
 		</div>
-		
-		<!--Will add an arrow at the end so user will be guided that there is more; flex due to format, grid is also possible.-->
 	</section>
 
 	<!-- 4. For each recent post, render one 

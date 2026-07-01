@@ -57,7 +57,7 @@ const themes = [...new Set(sorted.flatMap(post => post.data.tags ?? []))].sort()
         )}
     </section>
 
-    <section class="bookshelf-results">
+    <section class="bookshelf-results" id="bookshelf-results">
         <p class="bookshelf-count" id="bookshelf-count" aria-live="polite"></p>
 
         <div class="post-grid bookshelf-grid" id="bookshelf-grid">
@@ -84,6 +84,12 @@ const themes = [...new Set(sorted.flatMap(post => post.data.tags ?? []))].sort()
             <p>Nothing matches that search just yet. Try a different word, or clear the filters below.</p>
             <button type="button" class="error-link" id="bookshelf-clear">Clear filters</button>
         </div>
+
+        <nav class="bookshelf-pagination" id="bookshelf-pagination" aria-label="Bookshelf pagination" hidden>
+            <button type="button" class="pagination-btn" id="pagination-prev" aria-label="Previous page">← Prev</button>
+            <div class="pagination-pages" id="pagination-pages"></div>
+            <button type="button" class="pagination-btn" id="pagination-next" aria-label="Next page">Next →</button>
+        </nav>
     </section>
 
 </BaseLayout>
@@ -93,14 +99,25 @@ const themes = [...new Set(sorted.flatMap(post => post.data.tags ?? []))].sort()
     // params, so filtering (both the initial ?category=/?tag= state
     // from links elsewhere on the site, and live search) all happens
     // here on the client against the data-* attributes rendered above.
+    // Pagination works the same way — it slices whatever the current
+    // search/filter combination matched, not the full unfiltered list,
+    // so "page 2" always means page 2 of what's actually showing.
+    const PAGE_SIZE = 15;
+    let currentPage = 1;
+
     const searchInput = document.getElementById("bookshelf-search-input") as HTMLInputElement | null;
     const grid = document.getElementById("bookshelf-grid");
+    const resultsSection = document.getElementById("bookshelf-results");
     const cards = Array.from(document.querySelectorAll<HTMLElement>(".bookshelf-card"));
     const countEl = document.getElementById("bookshelf-count");
     const emptyEl = document.getElementById("bookshelf-empty");
     const clearBtn = document.getElementById("bookshelf-clear");
     const categoryPills = document.querySelectorAll<HTMLButtonElement>('#category-pills .filter-pill');
     const themePills = document.querySelectorAll<HTMLButtonElement>('#theme-pills .filter-pill');
+    const paginationNav = document.getElementById("bookshelf-pagination");
+    const paginationPages = document.getElementById("pagination-pages");
+    const prevBtn = document.getElementById("pagination-prev") as HTMLButtonElement | null;
+    const nextBtn = document.getElementById("pagination-next") as HTMLButtonElement | null;
 
     let activeCategory = "all";
     let activeTag = "all";
@@ -111,11 +128,10 @@ const themes = [...new Set(sorted.flatMap(post => post.data.tags ?? []))].sort()
         });
     }
 
-    function applyFilters() {
+    function getMatches(): HTMLElement[] {
         const query = (searchInput?.value ?? "").trim().toLowerCase();
-        let visibleCount = 0;
 
-        cards.forEach(card => {
+        return cards.filter(card => {
             const matchesQuery =
                 query === "" ||
                 (card.dataset.title ?? "").includes(query) ||
@@ -127,20 +143,98 @@ const themes = [...new Set(sorted.flatMap(post => post.data.tags ?? []))].sort()
             const cardTags = (card.dataset.tags ?? "").split("|");
             const matchesTag = activeTag === "all" || cardTags.includes(activeTag);
 
-            const isVisible = matchesQuery && matchesCategory && matchesTag;
-            card.hidden = !isVisible;
-            if (isVisible) visibleCount++;
+            return matchesQuery && matchesCategory && matchesTag;
+        });
+    }
+
+    // Standard "1 … 4 5 6 … 12" condensed page list, so a large
+    // bookshelf doesn't turn into a wall of page buttons.
+    function buildPageList(totalPages: number, current: number): (number | "...")[] {
+        if (totalPages <= 7) {
+            return Array.from({ length: totalPages }, (_, i) => i + 1);
+        }
+        const pages: (number | "...")[] = [1];
+        if (current > 3) pages.push("...");
+        const start = Math.max(2, current - 1);
+        const end = Math.min(totalPages - 1, current + 1);
+        for (let p = start; p <= end; p++) pages.push(p);
+        if (current < totalPages - 2) pages.push("...");
+        pages.push(totalPages);
+        return pages;
+    }
+
+    function renderPagination(totalPages: number) {
+        if (!paginationPages || !paginationNav || !prevBtn || !nextBtn) return;
+
+        if (totalPages <= 1) {
+            paginationNav.hidden = true;
+            return;
+        }
+        paginationNav.hidden = false;
+
+        paginationPages.innerHTML = "";
+        buildPageList(totalPages, currentPage).forEach(entry => {
+            if (entry === "...") {
+                const span = document.createElement("span");
+                span.className = "pagination-ellipsis";
+                span.textContent = "…";
+                paginationPages.appendChild(span);
+                return;
+            }
+
+            const pageNum = entry;
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "pagination-page";
+            btn.textContent = String(pageNum);
+            if (pageNum === currentPage) {
+                btn.classList.add("is-active");
+                btn.setAttribute("aria-current", "page");
+            }
+            btn.addEventListener("click", () => {
+                currentPage = pageNum;
+                render();
+                scrollToResultsTop();
+            });
+            paginationPages.appendChild(btn);
+        });
+
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === totalPages;
+    }
+
+    function scrollToResultsTop() {
+        resultsSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function render() {
+        const matches = getMatches();
+        const totalPages = Math.max(1, Math.ceil(matches.length / PAGE_SIZE));
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        const startIndex = (currentPage - 1) * PAGE_SIZE;
+        const pageItems = new Set(matches.slice(startIndex, startIndex + PAGE_SIZE));
+
+        cards.forEach(card => {
+            card.hidden = !pageItems.has(card);
         });
 
         if (countEl) {
-            countEl.textContent =
-                visibleCount === 0
-                    ? ""
-                    : `Showing ${visibleCount} ${visibleCount === 1 ? "entry" : "entries"}`;
+            if (matches.length === 0) {
+                countEl.textContent = "";
+            } else if (matches.length === 1) {
+                countEl.textContent = "Showing 1 entry";
+            } else {
+                const rangeStart = startIndex + 1;
+                const rangeEnd = Math.min(startIndex + PAGE_SIZE, matches.length);
+                countEl.textContent = `Showing ${rangeStart}–${rangeEnd} of ${matches.length} entries`;
+            }
         }
 
-        if (grid) grid.hidden = visibleCount === 0;
-        if (emptyEl) emptyEl.hidden = visibleCount !== 0;
+        if (grid) grid.hidden = matches.length === 0;
+        if (emptyEl) emptyEl.hidden = matches.length !== 0;
+
+        renderPagination(totalPages);
     }
 
     function syncUrl() {
@@ -158,8 +252,9 @@ const themes = [...new Set(sorted.flatMap(post => post.data.tags ?? []))].sort()
         pill.addEventListener("click", () => {
             activeCategory = pill.dataset.value ?? "all";
             setActivePill(categoryPills, activeCategory);
+            currentPage = 1;
             syncUrl();
-            applyFilters();
+            render();
         });
     });
 
@@ -167,21 +262,40 @@ const themes = [...new Set(sorted.flatMap(post => post.data.tags ?? []))].sort()
         pill.addEventListener("click", () => {
             activeTag = pill.dataset.value ?? "all";
             setActivePill(themePills, activeTag);
+            currentPage = 1;
             syncUrl();
-            applyFilters();
+            render();
         });
     });
 
-    searchInput?.addEventListener("input", applyFilters);
+    searchInput?.addEventListener("input", () => {
+        currentPage = 1;
+        render();
+    });
 
     clearBtn?.addEventListener("click", () => {
         if (searchInput) searchInput.value = "";
         activeCategory = "all";
         activeTag = "all";
+        currentPage = 1;
         setActivePill(categoryPills, "all");
         setActivePill(themePills, "all");
         syncUrl();
-        applyFilters();
+        render();
+    });
+
+    prevBtn?.addEventListener("click", () => {
+        if (currentPage > 1) {
+            currentPage--;
+            render();
+            scrollToResultsTop();
+        }
+    });
+
+    nextBtn?.addEventListener("click", () => {
+        currentPage++;
+        render();
+        scrollToResultsTop();
     });
 
     // Read initial state from the URL (e.g. a Tag link from the
@@ -201,5 +315,5 @@ const themes = [...new Set(sorted.flatMap(post => post.data.tags ?? []))].sort()
         setActivePill(themePills, activeTag);
     }
 
-    applyFilters();
+    render();
 </script>
