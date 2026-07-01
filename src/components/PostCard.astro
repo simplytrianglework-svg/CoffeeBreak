@@ -5,15 +5,24 @@ interface Props {
     description: string;
     href: string;
     image: string;
+    date?: Date;
 }
 
-const { title, description, href, image } = Astro.props;
+const { title, description, href, image, date } = Astro.props;
+
+// Formatted here rather than passed pre-formatted from callers, so
+// every card renders dates identically no matter which page (home,
+// newsletter, future category/theme pages) is rendering the grid.
+const formattedDate = date
+    ? new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" }).format(date)
+    : null;
 ---
 
 <div class="post-card">
     <img src={image} alt={title} loading="lazy" decoding="async" />
     <div class="card-content">
         <h3>{title}</h3>
+        {formattedDate && <time class="card-date" datetime={date.toISOString()}>{formattedDate}</time>}
         <p>{description}</p>
         <a href={href}>Read more</a>
     </div>

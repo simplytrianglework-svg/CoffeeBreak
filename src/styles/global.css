@@ -1,4 +1,19 @@
-/* src/styles/global.css */
+/* src/styles/global.css
+   ============================================================
+   Coffee Break — "late-night reading nook" redesign
+   ------------------------------------------------------------
+   Design intent: a warm, low-glare reading lamp on a dark table,
+   not a bright shop sign. Typography leads (a soft literary serif
+   for headings, a comfortable serif for body copy, a quiet sans
+   for small UI chrome), color is restrained to a single amber
+   accent, and every decorative flourish earns its place instead
+   of shouting for attention. Card/parchment surfaces (about,
+   newsletter, work-with-me, post pages) now work by *re-scoping*
+   the shared color variables locally, so one rule set adapts to
+   both the dark page and the light "page of a book" surfaces
+   instead of needing a parallel set of hand-written overrides for
+   every single element (previously ~50 duplicate override rules).
+   ============================================================ */
 
 *, *::before, *::after {
     box-sizing: border-box;
@@ -11,17 +26,8 @@ html {
     scroll-behavior: smooth;
 }
 
-/* Respect users who have motion sensitivity turned on at the OS
-   level. Previously every transition and the smooth scroll fired
-   unconditionally, which can cause real discomfort (dizziness,
-   nausea) for people with vestibular disorders. This doesn't remove
-   any animation for most visitors — it only disables it for the
-   subset of users who've explicitly asked their OS to minimize
-   motion. */
 @media (prefers-reduced-motion: reduce) {
-    html {
-        scroll-behavior: auto;
-    }
+    html { scroll-behavior: auto; }
     *, *::before, *::after {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
@@ -35,99 +41,18 @@ body {
     overflow-x: hidden;
 }
 
-img {
-    max-width: 100%;
-    display: block;
-}
+img { max-width: 100%; display: block; }
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
 
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-ul {
-    list-style: none;
-}
-
-/* Visually hidden but still announced by screen readers. Used by the
-   newsletter form's email label, and reusable anywhere else a label
-   is needed for accessibility without being needed visually. */
 .sr-only {
     position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border: 0;
-}
-
-/* Page wrapper */
-.page-wrapper {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-/* Header */
-.main-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem 2rem;
-}
-
-/* Main content */
-.container {
-    flex: 1;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-}
-
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 280px;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-    z-index: 100;
-}
-
-.sidebar.open {
-    transform: translateX(0);
-}
-
-.sidebar-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.5rem;
-}
-
-.sidebar-close,
-.hamburger {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2rem;
-}
-
-.sidebar-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 99;
-}
-
-.sidebar-overlay.open {
-    display: block;
 }
 
 /* ========================
@@ -135,46 +60,48 @@ ul {
    ======================== */
 
 :root {
-    /* Colors — dark theme (default page background) */
-    --color-bg: #1a0f0a;
-    --color-surface: #2c1810;
-    --color-surface-alt: #3d2314;
-    --color-border: #5c3d2e;
-    --color-text-primary: #f5e6d3;
-    --color-text-secondary: #c4a882;
-    --color-text-muted: #8a6e5a;
-    --color-accent: #c8922a;
-    --color-accent-hover: #e0a83a;
+    /* Dark "reading room" palette — softened from near-black so long
+       sessions at night stay easy on the eyes, with a single warm
+       amber doing all the accent work rather than competing hues. */
+    --color-bg: #1a120b;
+    --color-bg-deep: #100a06;
+    --color-surface: #271a12;
+    --color-surface-alt: #332418;
+    --color-border: #4a3625;
+    --color-text-primary: #f1e3d1;
+    --color-text-secondary: #c7a883;
+    --color-text-muted: #8f7359;
+    --color-accent: #d99a4d;
+    --color-accent-soft: #e3b374;
+    --color-accent-hover: #eab06a;
 
-    /* Colors — light "card" theme. Several pages (about, work-with-me,
-       newsletter, individual post pages) embed a lighter parchment-
-       style card inside the dark page. These six values were
-       previously hardcoded as raw hex codes roughly 50 times across
-       the file (e.g. #f5ede0, #1a0f0a reused, #8a5a3a, #d4b896,
-       #c4a882, #3d2314, #ede0ce, #e0a83a). Centralizing them here
-       means a future palette change is a one-line edit instead of a
-       find-and-replace across hundreds of lines, and it makes the
-       relationship between the dark and light themes explicit. */
-    --color-card-bg: #f5ede0;
-    --color-card-bg-alt: #ede0ce;
-    --color-card-surface-alt: #d4b896;
-    --color-card-border: #c4a882;
-    --color-card-text-primary: #1a0f0a;
-    --color-card-text-secondary: #5c3d2e;
-    --color-card-text-muted: #3d2314;
-    --color-card-accent: #8a5a3a;
-    /* Softer reading color for long-form body paragraphs specifically.
-       --color-card-text-muted (#3d2314) is dark enough to feel like
-       harsh black-on-cream when reading a full post, even though it's
-       fine for short UI labels. This is a warm, softened brown that
-       keeps comfortable contrast for reading without the "stark text
-       on parchment" effect. */
-    --color-card-text-body: #6b4a35;
+    /* Light "page" palette — the parchment surfaces readers land on
+       for long-form content (about / newsletter / work-with-me /
+       the post itself). Warm cream rather than stark white, so the
+       jump from the dark shell never feels like a light switched
+       on. */
+    --color-card-bg: #f4ead9;
+    --color-card-bg-alt: #ecdfc7;
+    --color-card-surface-alt: #ddc49a;
+    --color-card-border: #c9ab7d;
+    --color-card-text-primary: #251609;
+    --color-card-text-secondary: #5c4128;
+    --color-card-text-muted: #4a3119;
+    --color-card-accent: #8a5a2e;
+    /* Softened ink used specifically for long-form paragraphs, a
+       touch lighter than the muted/primary text tones so a full
+       article doesn't read as stark black-on-cream. */
+    --color-card-text-body: #4c3521;
 
-    /* Typography */
-    --font-heading: 'Playfair Display', serif;
+    /* Typography — a warm literary display serif for headings, a
+       comfortable text serif for reading, an italic accent serif
+       for pull-quotes/intros, and a quiet sans strictly for small
+       UI chrome (nav labels, eyebrows, buttons) so it never fights
+       the storytelling voice of the serif type. */
+    --font-heading: 'Fraunces', serif;
     --font-body: 'Lora', serif;
     --font-accent: 'Cormorant Garamond', serif;
+    --font-ui: 'Inter', sans-serif;
 
     /* Spacing */
     --space-xs: 0.25rem;
@@ -182,13 +109,19 @@ ul {
     --space-md: 1rem;
     --space-lg: 2rem;
     --space-xl: 4rem;
+    --space-2xl: 6rem;
 
-    /* Border radius */
-    --radius-sm: 4px;
-    --radius-md: 8px;
+    /* Softer, more contemporary rounding than the old 4/8px scale */
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 22px;
     --radius-pill: 999px;
 
-    /* Focus ring, used by the new :focus-visible rules below */
+    /* Comfortable reading measure for long-form body text */
+    --measure: 68ch;
+
+    --ease: cubic-bezier(0.4, 0, 0.2, 1);
+
     --focus-ring: 2px solid var(--color-accent);
     --focus-ring-offset: 2px;
 }
@@ -198,53 +131,56 @@ ul {
    ======================== */
 
 body {
-    /* Full-page vertical atmosphere: dark at the bottom rising to a
-       warm gold-lit top, rather than a glow confined to the header
-       area. This reads as one continuous lit space — like a room lit
-       from above, darkest in the corners furthest from the light —
-       rather than a flat fill with a decorated header sitting on top
-       of it. background-attachment: fixed keeps the gradient pinned
-       to the viewport rather than scrolling with content, so the
-       lightest point always stays near the top of the screen as you
-       scroll, and the page never looks like it's "running out of"
-       gradient on long pages. */
+    /* Layered like a room lit by one warm lamp: a soft amber pool
+       near the top fading into deep shadow at the edges, plus a
+       very light grain so the dark fields never look like a flat
+       digital fill. background-attachment: fixed keeps the glow
+       anchored to the viewport rather than scrolling away. */
     background-color: var(--color-bg);
-    background-image: linear-gradient(
-        180deg,
-        #3a2210 0%,
-        #2c1810 22%,
-        #1f130b 50%,
-        #150c06 75%,
-        #0d0703 100%
-    );
-    background-attachment: fixed;
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+        radial-gradient(ellipse 900px 560px at 50% 0%, rgba(217, 154, 77, 0.16) 0%, transparent 62%),
+        linear-gradient(180deg, #3a2615 0%, #271a12 24%, #1c130c 52%, #130d08 76%, #0c0805 100%);
+    background-blend-mode: overlay, normal, normal;
+    background-size: 140px 140px, auto, auto;
+    background-repeat: repeat, no-repeat, no-repeat;
+    background-attachment: fixed, fixed, fixed;
     color: var(--color-text-primary);
     font-family: var(--font-body);
+    font-size: 1rem;
     line-height: 1.7;
 }
 
 h1, h2, h3, h4 {
     font-family: var(--font-heading);
-    font-weight: 400;
-    line-height: 1.3;
+    font-weight: 500;
+    line-height: 1.25;
     color: var(--color-text-primary);
 }
 
-p {
-    color: var(--color-text-secondary);
+p { color: var(--color-text-secondary); }
+
+a { transition: color 0.2s var(--ease); }
+a:hover { color: var(--color-accent); }
+
+::selection {
+    background: rgba(217, 154, 77, 0.35);
+    color: var(--color-text-primary);
 }
 
-a:hover {
-    color: var(--color-accent);
+html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-accent) transparent;
 }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+    background-color: var(--color-border);
+    border-radius: var(--radius-pill);
+    border: 2px solid var(--color-bg);
+}
+::-webkit-scrollbar-thumb:hover { background-color: var(--color-accent); }
 
-/* Keyboard focus indicator. Previously every interactive element
-   (links, pills, sidebar categories, the hamburger button) only had
-   a :hover state, which means a keyboard-only user tabbing through
-   the page got zero visual feedback about where focus currently is.
-   :focus-visible (rather than plain :focus) shows the ring only for
-   keyboard/assistive-tech navigation, not for mouse clicks, so it
-   doesn't add visual noise for mouse users. */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
@@ -255,123 +191,235 @@ input:focus-visible,
 }
 
 /* ========================
+   PAGE / LAYOUT SHELL
+   ======================== */
+
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container {
+    flex: 1;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-lg);
+}
+
+.container-full {
+    flex: 1;
+    width: 100%;
+    padding: var(--space-lg);
+}
+
+.container:has(.brand-banner) { padding: 0; }
+
+/* ========================
    SIDEBAR
    ======================== */
 
 .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    width: 300px;
     background-color: var(--color-surface);
     border-right: 1px solid var(--color-border);
+    box-shadow: 20px 0 50px -20px rgba(0, 0, 0, 0.6);
+    transform: translateX(-100%);
+    transition: transform 0.35s var(--ease);
+    z-index: 100;
+    overflow-y: auto;
+}
+
+.sidebar.open { transform: translateX(0); }
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-lg);
+    border-bottom: 1px solid var(--color-border);
 }
 
 .sidebar-title {
     font-family: var(--font-heading);
-    font-size: 1.2rem;
+    font-style: italic;
+    font-size: 1.15rem;
     color: var(--color-accent);
-    letter-spacing: 0.1em;
+    letter-spacing: 0.02em;
 }
 
 .sidebar-close,
 .hamburger {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.15rem;
     color: var(--color-text-primary);
-    transition: color 0.2s ease;
+    transition: color 0.2s var(--ease), transform 0.2s var(--ease);
+    line-height: 1;
 }
 
 .sidebar-close:hover,
 .hamburger:hover {
     color: var(--color-accent);
+    transform: scale(1.08);
 }
 
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 6, 3, 0.6);
+    backdrop-filter: blur(2px);
+    z-index: 99;
+}
+
+.sidebar-overlay.open { display: block; }
+
+.sidebar-nav {
+    padding: var(--space-md);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-category {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-sm) var(--space-md);
+    cursor: pointer;
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    border-radius: var(--radius-sm);
+    transition: background-color 0.2s var(--ease), color 0.2s var(--ease);
+    user-select: none;
+}
+
+.sidebar-category:hover {
+    background-color: var(--color-surface-alt);
+    color: var(--color-text-primary);
+}
+
+.sidebar-category.active { color: var(--color-accent); }
+
+.sidebar-category .indicator {
+    font-size: 0.55rem;
+    transition: transform 0.25s var(--ease);
+}
+
+.sidebar-category.active .indicator { transform: rotate(90deg); }
+
+.sidebar-topics {
+    display: none;
+    flex-direction: column;
+    padding-left: var(--space-lg);
+}
+
+.sidebar-topics.open { display: flex; }
+
+.sidebar-topic {
+    padding: var(--space-xs) var(--space-md);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: color 0.2s var(--ease);
+}
+
+.sidebar-topic:hover { color: var(--color-accent); }
+
 /* ========================
-   HEADER
+   HEADER / NAVBAR
    ======================== */
 
 .main-header {
-    /* Previously the navbar had its own opaque surface-color
-       gradient, which fought with the new full-page gradient and
-       made the header read as a separate dark bar floating on top of
-       the page rather than part of one continuous lit space. A thin
-       translucent wash keeps nav text readable without breaking the
-       continuity of the body's gradient showing through. */
-    background: linear-gradient(
-        180deg,
-        rgba(13, 7, 3, 0.35) 0%,
-        rgba(13, 7, 3, 0.15) 100%
-    );
-    border-bottom: 1px solid rgba(200, 146, 42, 0.25);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
     padding: var(--space-md) var(--space-lg);
+    background: linear-gradient(180deg, rgba(12, 8, 5, 0.72) 0%, rgba(12, 8, 5, 0.45) 100%);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(217, 154, 77, 0.18);
 }
 
-/* ========================
-   NAVBAR
-   ======================== */
+.main-nav { flex: 1; }
 
 .nav-links {
     display: flex;
     align-items: center;
     gap: var(--space-lg);
+    flex-wrap: wrap;
 }
 
 .nav-brand a {
     font-family: var(--font-heading);
-    font-size: 1.1rem;
-    letter-spacing: 0.15em;
+    font-style: italic;
+    font-size: 1.2rem;
+    letter-spacing: 0.02em;
     color: var(--color-text-primary);
-    transition: color 0.2s ease;
 }
 
-.nav-brand a:hover {
-    color: var(--color-accent);
-}
+.nav-brand a:hover { color: var(--color-accent); }
 
 .nav-item a {
-    font-family: var(--font-body);
-    font-size: 0.9rem;
-    letter-spacing: 0.12em;
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--color-text-secondary);
-    transition: color 0.2s ease;
     padding: var(--space-xs) 0;
+    position: relative;
 }
 
-.nav-item a:hover {
-    color: var(--color-accent);
+.nav-item a:hover { color: var(--color-accent); }
+
+.nav-item a::before {
+    content: "";
+    position: absolute;
+    left: 0; right: 100%; bottom: -3px;
+    height: 1px;
+    background: var(--color-accent);
+    transition: right 0.25s var(--ease);
 }
 
-/* Active page indicator. Navbar.astro now sets aria-current="page"
-   on the current page's link — this gives that attribute an actual
-   visual treatment instead of doing nothing. */
-.nav-item a[aria-current="page"] {
-    color: var(--color-accent);
-    border-bottom: 1px solid var(--color-accent);
-}
+.nav-item a:hover::before { right: 0; }
+
+.nav-item a[aria-current="page"] { color: var(--color-accent); }
+.nav-item a[aria-current="page"]::before { right: 0; opacity: 0.7; }
 
 .hamburger {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     padding: var(--space-xs) var(--space-sm);
 }
 
 /* ========================
-   PILLS
+   PILLS / BUTTONS
    ======================== */
 
-/* NOTE: the old .category-pill class is gone. It styled markup from
-   the original Category.astro/ThemeTag.astro duplication; both were
-   merged into a single Tag.astro component that only ever renders
-   .theme-pill, so .category-pill matched nothing in the actual
-   markup and was dead weight. If you want categories to look visually
-   distinct from themes again, pass a variant prop to Tag.astro and
-   add a modifier class here rather than reintroducing a duplicate
-   component. */
 .theme-pill {
     display: inline-block;
     padding: var(--space-xs) var(--space-md);
     border-radius: var(--radius-pill);
+    font-family: var(--font-ui);
     font-size: 0.75rem;
-    letter-spacing: 0.12em;
+    font-weight: 500;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     cursor: pointer;
-    transition: all 0.2s ease;
-    background-color: transparent;
+    transition: background-color 0.2s var(--ease), color 0.2s var(--ease), box-shadow 0.2s var(--ease), transform 0.2s var(--ease);
+    background-color: rgba(217, 154, 77, 0.08);
     border: 1px solid var(--color-accent);
     color: var(--color-accent);
 }
@@ -379,12 +427,9 @@ input:focus-visible,
 .theme-pill:hover {
     background-color: var(--color-accent);
     color: var(--color-bg);
-    box-shadow: 0 0 16px rgba(200, 146, 42, 0.4);
+    box-shadow: 0 6px 20px -6px rgba(217, 154, 77, 0.5);
+    transform: translateY(-1px);
 }
-
-/* ========================
-   PILL SECTIONS
-   ======================== */
 
 .category-tags,
 .theme-tags {
@@ -396,7 +441,147 @@ input:focus-visible,
 }
 
 /* ========================
-   POST GRID
+   SECTION RHYTHM & DIVIDERS
+   ======================== */
+
+.featured-posts,
+.recent-posts,
+.category-tags,
+.theme-tags,
+.author-introduction {
+    position: relative;
+    padding: var(--space-xl) 0;
+}
+
+.featured-posts::after,
+.recent-posts::after,
+.category-tags::after,
+.theme-tags::after,
+.author-introduction::after {
+    content: "";
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-border) 20%, var(--color-border) 80%, transparent);
+}
+
+.featured-posts::before,
+.recent-posts::before,
+.category-tags::before,
+.theme-tags::before,
+.author-introduction::before {
+    content: "";
+    position: absolute;
+    bottom: -3px; left: 50%;
+    transform: translateX(-50%);
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow: 0 0 12px 2px rgba(217, 154, 77, 0.55);
+}
+
+.featured-posts h2,
+.recent-posts h2,
+.author-introduction h2 {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.9rem;
+    letter-spacing: 0.01em;
+    text-transform: none;
+    margin-bottom: var(--space-md);
+    color: var(--color-text-primary);
+    position: relative;
+    padding-bottom: var(--space-sm);
+}
+
+.featured-posts h2::after,
+.recent-posts h2::after {
+    content: "";
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 48px; height: 2px;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent);
+    opacity: 0.7;
+}
+
+/* ========================
+   BRAND HERO
+   ======================== */
+
+.brand-banner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    padding: var(--space-2xl) var(--space-lg) var(--space-xl);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(ellipse 620px 320px at 50% 15%, rgba(217, 154, 77, 0.16) 0%, transparent 70%);
+    margin-bottom: var(--space-lg);
+}
+
+.brand-banner::before {
+    content: "";
+    position: absolute;
+    top: var(--space-lg); left: 50%;
+    transform: translateX(-50%);
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow: 0 0 14px 3px rgba(217, 154, 77, 0.6);
+    opacity: 0.8;
+}
+
+.brand-banner::after {
+    content: "";
+    position: absolute;
+    bottom: 0; left: 12%; right: 12%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-accent) 50%, transparent);
+    opacity: 0.4;
+}
+
+.brand-logo {
+    color: var(--color-accent);
+    margin-bottom: var(--space-xs);
+    filter: drop-shadow(0 0 18px rgba(217, 154, 77, 0.35));
+}
+
+.brand-logo svg path:nth-of-type(3),
+.brand-logo svg path:nth-of-type(4),
+.brand-logo svg path:nth-of-type(5) {
+    animation: steam-rise 3.2s ease-in-out infinite;
+    transform-origin: center bottom;
+}
+.brand-logo svg path:nth-of-type(4) { animation-delay: 0.5s; }
+.brand-logo svg path:nth-of-type(5) { animation-delay: 1s; }
+
+@keyframes steam-rise {
+    0%   { transform: translateY(2px); opacity: 0.55; }
+    50%  { transform: translateY(-3px); opacity: 1; }
+    100% { transform: translateY(2px); opacity: 0.55; }
+}
+
+.brand-title {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(2.4rem, 5vw, 3.6rem);
+    letter-spacing: 0.01em;
+    text-transform: none;
+    color: var(--color-text-primary);
+    text-shadow: 0 0 36px rgba(241, 227, 209, 0.22);
+}
+
+.brand-link { color: inherit; }
+.brand-link:hover { color: var(--color-accent); }
+
+/* ========================
+   POST GRID / POST CARD
    ======================== */
 
 .post-grid {
@@ -406,55 +591,21 @@ input:focus-visible,
     padding: var(--space-md) 0;
 }
 
-/* ========================
-   POST CARD
-   ======================== */
-
 .post-card {
     position: relative;
+    display: flex;
+    flex-direction: column;
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     overflow: hidden;
-    transition: transform 0.2s ease, border-color 0.2s ease;
+    transition: transform 0.3s var(--ease), border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
 }
 
 .post-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
     border-color: var(--color-accent);
-}
-
-/* Brown ribbon bookmark draped over the upper-left corner of each
-   post card. Built as two stacked triangles: a darker "shadow" layer
-   slightly offset behind a lighter front layer, which gives the
-   folded-fabric look of a real ribbon corner rather than a flat
-   triangle. Sits inside the card's overflow:hidden bounds rather than
-   hanging off the edge, since the card clips anything outside it. */
-.post-card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 56px 56px 0 0;
-    border-color: var(--color-card-text-muted) transparent transparent transparent;
-    z-index: 2;
-    filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.4));
-}
-
-.post-card::after {
-    content: "";
-    position: absolute;
-    top: 6px;
-    left: 6px;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 46px 46px 0 0;
-    border-color: var(--color-card-accent) transparent transparent transparent;
-    z-index: 3;
+    box-shadow: 0 22px 46px -20px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(217, 154, 77, 0.25);
 }
 
 .post-card img {
@@ -462,196 +613,66 @@ input:focus-visible,
     aspect-ratio: 16/9;
     object-fit: cover;
     background-color: var(--color-surface-alt);
+    transition: transform 0.6s var(--ease);
 }
 
+.post-card:hover img { transform: scale(1.05); }
+
 .card-content {
-    padding: var(--space-md);
+    padding: var(--space-md) var(--space-md) var(--space-lg);
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
+    gap: var(--space-xs);
+    flex: 1;
+}
+
+.card-date {
+    display: block;
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    opacity: 0.85;
 }
 
 .card-content h3 {
     font-family: var(--font-heading);
-    font-size: 1.1rem;
+    font-weight: 500;
+    font-size: 1.2rem;
+    line-height: 1.35;
     color: var(--color-text-primary);
 }
 
 .card-content p {
-    font-size: 0.9rem;
+    font-size: 0.92rem;
+    line-height: 1.6;
     color: var(--color-text-secondary);
+    flex: 1;
 }
 
 .card-content a {
-    font-size: 0.8rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--color-accent);
-    transition: color 0.2s ease;
-}
-
-.card-content a:hover {
-    color: var(--color-accent-hover);
-}
-
-/* ========================
-   SECTIONS
-   ======================== */
-
-.featured-posts,
-.recent-posts,
-.category-tags,
-.theme-tags,
-.author-introduction {
-    position: relative;
-    padding: var(--space-lg) 0;
-}
-
-/* Ornamental section divider: a gold line that fades at both ends
-   with a small centered diamond, rather than a flat solid border.
-   This is the classic old-manuscript/letterpress section-break motif
-   and is what was meant by the separators "not being beautiful" —
-   a plain 1px line reads as a UI utility divider, not a designed
-   element. */
-.featured-posts::after,
-.recent-posts::after,
-.category-tags::after,
-.theme-tags::after,
-.author-introduction::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        var(--color-border) 15%,
-        var(--color-border) 85%,
-        transparent
-    );
-}
-
-.featured-posts::before,
-.recent-posts::before,
-.category-tags::before,
-.theme-tags::before,
-.author-introduction::before {
-    content: "◆";
-    position: absolute;
-    bottom: -5px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 0.6rem;
-    color: var(--color-accent);
-    line-height: 1;
-    padding: 0 var(--space-md);
-    z-index: 1;
-    /* A glow instead of a background patch to separate the diamond
-       from the line behind it — this works regardless of where the
-       element sits on the page's vertical gradient, unlike a flat
-       background-color mask which would mismatch at most scroll
-       positions. */
-    text-shadow:
-        0 0 6px var(--color-bg),
-        0 0 6px var(--color-bg),
-        0 0 10px var(--color-bg);
-}
-
-.featured-posts h2,
-.recent-posts h2,
-.author-introduction h2 {
-    font-size: 1.5rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    margin-bottom: var(--space-md);
-    color: var(--color-text-primary);
-    position: relative;
-    padding-bottom: var(--space-sm);
-}
-
-/* Same gold underline ornament used on the about page's "Author
-   Name" heading, now applied consistently to every major section
-   header across the site so the regal styling doesn't feel like it
-   only landed on one page. */
-.featured-posts h2::after,
-.recent-posts h2::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 60px;
-    height: 1px;
-    background: var(--color-accent);
-    opacity: 0.6;
-}
-
-/* ========================
-   BRAND HERO
-   ======================== */
-
-.brand-banner {
-    display: flex;
-    flex-direction: row;
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: var(--space-md);
-    padding: var(--space-xl) var(--space-lg);
-    text-align: center;
-    position: relative;
-    /* A faint gold sheen across the banner itself, like the area
-       under a single pendant light. Layered over the body's own
-       radial glow so the brand text reads as the brightest point on
-       the page — drawing the eye exactly where a hero should. */
-    background: linear-gradient(
-        180deg,
-        rgba(200, 146, 42, 0.07) 0%,
-        transparent 100%
-    );
-    margin-bottom: var(--space-lg);
-}
-
-/* Replaces the flat border-bottom with a gradient line that fades at
-   both ends rather than cutting off sharply — a small but real touch
-   that reads as "candlelit/regal" instead of "utilitarian divider." */
-.brand-banner::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 10%;
-    right: 10%;
-    height: 1px;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        var(--color-accent) 50%,
-        transparent
-    );
-    opacity: 0.5;
-}
-
-.brand-logo {
-    color: var(--color-accent);
-    margin-bottom: var(--space-sm);
-}
-
-.brand-title {
-    font-family: var(--font-heading);
+    gap: 0.4em;
+    margin-top: var(--space-xs);
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
     font-weight: 600;
-    font-size: 4rem;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--color-text-primary);
-}
-
-.brand-link {
-    color: inherit;
-}
-
-.brand-link:hover {
     color: var(--color-accent);
+    width: fit-content;
 }
+
+.card-content a::after {
+    content: "\2192";
+    transition: transform 0.25s var(--ease);
+}
+
+.card-content a:hover { color: var(--color-accent-hover); }
+.card-content a:hover::after { transform: translateX(4px); }
 
 /* ========================
    FEATURED POSTS
@@ -666,7 +687,7 @@ input:focus-visible,
 .featured-posts .post-card {
     display: grid;
     grid-template-columns: 1.2fr 1fr;
-    min-height: 400px;
+    min-height: 380px;
 }
 
 .featured-posts .post-card img {
@@ -677,26 +698,24 @@ input:focus-visible,
 }
 
 .featured-posts .card-content {
-    display: flex;
-    flex-direction: column;
     justify-content: center;
     padding: var(--space-xl);
-    gap: var(--space-md);
+    gap: var(--space-sm);
 }
 
 .featured-posts .card-content h3 {
     font-size: 2rem;
-    letter-spacing: 0.08em;
+    font-style: italic;
     line-height: 1.2;
 }
 
 .featured-posts .card-content p {
-    font-size: 1rem;
-    line-height: 1.7;
+    font-size: 1.02rem;
+    line-height: 1.75;
 }
 
 /* ========================
-   AUTHOR INTRODUCTION
+   AUTHOR INTRODUCTION (home)
    ======================== */
 
 .author-card {
@@ -711,89 +730,67 @@ input:focus-visible,
 }
 
 .author-image img {
-    width: 80px;
-    height: 80px;
+    width: 84px; height: 84px;
     border-radius: 50%;
     object-fit: cover;
     background-color: var(--color-surface-alt);
+    border: 2px solid var(--color-accent);
 }
 
 .author-card-content h3 {
-    font-family: var(--font-heading);
-    font-size: 1.2rem;
+    font-size: 1.15rem;
     margin-bottom: var(--space-xs);
 }
 
 .author-card-content p {
-    font-size: 0.9rem;
+    font-size: 0.92rem;
     color: var(--color-text-secondary);
 }
 
 /* ========================
-   SIDEBAR NAV
+   PARCHMENT / CARD SURFACES
+   ------------------------------------------------------------
+   Re-scopes the shared color variables to the light "page" palette
+   for anything nested inside these wrappers. Every rule elsewhere
+   in this file that already reads var(--color-text-primary) etc.
+   now automatically renders correctly on cream instead of needing
+   a duplicate override block per element.
    ======================== */
 
-.sidebar-nav {
-    padding: var(--space-md);
-    display: flex;
-    flex-direction: column;
+.about-card,
+.newsletter-card,
+.work-card,
+.post-content-card {
+    --color-bg: var(--color-card-bg);
+    --color-surface: var(--color-card-bg-alt);
+    --color-surface-alt: var(--color-card-surface-alt);
+    --color-border: var(--color-card-border);
+    --color-text-primary: var(--color-card-text-primary);
+    --color-text-secondary: var(--color-card-text-secondary);
+    --color-text-muted: var(--color-card-text-muted);
+    --color-accent: var(--color-card-accent);
+
+    position: relative;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-card-border);
+    background-color: var(--color-card-bg);
+    max-width: 960px;
+    margin: var(--space-xl) auto;
+    padding: var(--space-xl);
+    box-shadow:
+        0 34px 70px -22px rgba(0, 0, 0, 0.55),
+        0 12px 28px -12px rgba(0, 0, 0, 0.4),
+        0 0 60px -24px rgba(217, 154, 77, 0.3);
+    background-image: linear-gradient(160deg, rgba(255, 255, 255, 0.28) 0%, transparent 32%);
+    background-blend-mode: overlay;
 }
 
-.sidebar-category {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--space-sm) var(--space-md);
-    cursor: pointer;
-    font-family: var(--font-body);
-    font-size: 0.8rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--color-text-secondary);
-    border-radius: var(--radius-sm);
-    transition: background-color 0.2s ease, color 0.2s ease;
-    user-select: none;
-}
-
-.sidebar-category:hover {
-    background-color: var(--color-surface-alt);
-    color: var(--color-text-primary);
-}
-
-.sidebar-category.active {
-    color: var(--color-accent);
-}
-
-.sidebar-category .indicator {
-    font-size: 0.6rem;
-    transition: transform 0.2s ease;
-}
-
-.sidebar-category.active .indicator {
-    transform: rotate(90deg);
-}
-
-.sidebar-topics {
-    display: none;
-    flex-direction: column;
-    padding-left: var(--space-lg);
-}
-
-.sidebar-topics.open {
-    display: flex;
-}
-
-.sidebar-topic {
-    padding: var(--space-xs) var(--space-md);
-    font-size: 0.8rem;
-    letter-spacing: 0.08em;
-    color: var(--color-text-muted);
-    cursor: pointer;
-    transition: color 0.2s ease;
-}
-
-.sidebar-topic:hover {
-    color: var(--color-accent);
+@media (max-width: 768px) {
+    .about-card, .newsletter-card, .work-card {
+        margin: var(--space-md) auto;
+        padding: var(--space-lg) var(--space-md);
+        border-radius: 0;
+    }
 }
 
 /* ========================
@@ -806,26 +803,21 @@ input:focus-visible,
     gap: var(--space-xl);
     max-width: 1000px;
     margin: 0 auto;
-    padding: var(--space-xl) 0;
     align-items: start;
 }
 
-/* Framed portrait treatment: a double-border effect (outer line +
-   inset gap + the image itself) reads as a gallery frame rather than
-   a flat placeholder square. This single change does more for the
-   "regal" feel than any font swap, since portraiture framing is one
-   of the strongest visual signals of formality/prestige. */
 .author-profile-image {
     position: relative;
     padding: 10px;
-    border: 1px solid var(--color-card-border);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
 }
 
 .author-profile-image::before {
     content: "";
     position: absolute;
     inset: 4px;
-    border: 1px solid var(--color-card-accent);
+    border: 1px solid var(--color-accent);
     opacity: 0.4;
     pointer-events: none;
 }
@@ -834,7 +826,8 @@ input:focus-visible,
     width: 100%;
     height: 300px;
     object-fit: cover;
-    background-color: var(--color-card-surface-alt);
+    background-color: var(--color-surface-alt);
+    border-radius: 2px;
     display: block;
 }
 
@@ -847,40 +840,37 @@ input:focus-visible,
 
 .author-introduction h2 {
     font-size: 2rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+    text-transform: none;
     margin-bottom: var(--space-sm);
     position: relative;
     padding-bottom: var(--space-sm);
 }
 
-/* Small ornamental divider beneath the author's name — a short
-   centered-left gold rule rather than the name just trailing into
-   blank space. Mirrors the same fade-line treatment used on the
-   brand banner, tying the two together visually. */
 .author-introduction h2::after {
     content: "";
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 60px;
-    height: 1px;
+    bottom: 0; left: 0;
+    width: 48px; height: 2px;
+    border-radius: var(--radius-pill);
     background: var(--color-accent);
-    opacity: 0.6;
+    opacity: 0.7;
 }
 
 .author-introduction p {
     font-family: var(--font-accent);
-    font-size: 1.1rem;
-    line-height: 1.8;
-    color: var(--color-card-text-body);
+    font-size: 1.15rem;
+    font-style: italic;
+    line-height: 1.75;
+    color: var(--color-text-secondary);
 }
 
 .author-interests h3,
 .author-experiences h3,
 .author-links h3 {
-    font-size: 0.8rem;
-    letter-spacing: 0.15em;
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--color-accent);
     margin-bottom: var(--space-sm);
@@ -902,13 +892,14 @@ input:focus-visible,
 
 .author-experiences p {
     font-family: var(--font-accent);
-    font-size: 1rem;
-    line-height: 1.8;
+    font-size: 1.05rem;
+    font-style: italic;
+    line-height: 1.75;
     color: var(--color-text-secondary);
 }
 
 .author-links p {
-    font-size: 0.9rem;
+    font-size: 0.92rem;
     color: var(--color-text-muted);
     margin-bottom: var(--space-sm);
 }
@@ -921,31 +912,31 @@ input:focus-visible,
 }
 
 .social-link-item a {
+    font-family: var(--font-ui);
     font-size: 0.85rem;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.03em;
     color: var(--color-text-secondary);
-    transition: color 0.2s ease;
 }
 
-.social-link-item a:hover {
-    color: var(--color-accent);
-}
+.social-link-item a:hover { color: var(--color-accent); }
 
 .work-cta a {
     display: inline-block;
     padding: var(--space-sm) var(--space-lg);
     border: 1px solid var(--color-accent);
     border-radius: var(--radius-pill);
+    font-family: var(--font-ui);
     font-size: 0.8rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 0.06em;
     color: var(--color-accent);
-    transition: all 0.2s ease;
+    transition: all 0.25s var(--ease);
 }
 
 .work-cta a:hover {
     background-color: var(--color-accent);
-    color: var(--color-bg);
+    color: var(--color-card-bg);
+    box-shadow: 0 8px 22px -8px rgba(138, 90, 46, 0.5);
 }
 
 .author-interests,
@@ -955,130 +946,14 @@ input:focus-visible,
     border-top: 1px solid var(--color-border);
 }
 
-/* FIXED: previously each page needed its own .container:has(.xyz-card)
-   rule to strip padding above the brand banner, and the homepage
-   (index.astro) was never given one since it has no "-card" wrapper
-   class at all — it renders <Brand /> directly. That's why only the
-   homepage kept showing a gap between the navbar and the banner no
-   matter how many other pages got fixed. Targeting .brand-banner
-   itself covers every page that uses the Brand component, present or
-   future, in one rule instead of needing a new one each time a page
-   is added. */
-.container:has(.brand-banner) {
-    padding: 0;
-}
-
-/* Shared "elevated parchment" treatment for the four cream-colored
-   cards (about, newsletter, work-with-me, post page). Previously
-   these were flat fills that looked pasted onto the dark background.
-   A soft shadow, a faint warm-to-neutral gradient, and a thin gold-
-   toned border together make them read as framed pages catching
-   candlelight rather than flat rectangles — applied here once so all
-   four cards share the same treatment instead of only the about page
-   having it. */
-.about-card,
-.newsletter-card,
-.work-card,
-.post-content-card {
-    border: 1px solid var(--color-card-border);
-    box-shadow:
-        0 20px 60px -15px rgba(0, 0, 0, 0.5),
-        0 8px 20px -8px rgba(0, 0, 0, 0.35);
-    background-image: linear-gradient(
-        160deg,
-        rgba(255, 255, 255, 0.25) 0%,
-        transparent 30%
-    );
-    background-blend-mode: overlay;
-}
-
-.about-card {
-    background-color: var(--color-card-bg);
-    border-radius: var(--radius-md);
-    max-width: 960px;
-    margin: var(--space-xl) auto;
-    padding: var(--space-xl);
-}
-
-/* Override dark theme colors inside the card */
-.about-card .author-introduction h2 {
-    color: var(--color-card-text-primary);
-}
-
-.about-card .author-introduction p {
-    color: var(--color-card-text-secondary);
-}
-
-.about-card .author-interests h3,
-.about-card .author-experiences h3,
-.about-card .author-links h3 {
-    color: var(--color-card-accent);
-}
-
-.about-card .author-interests,
-.about-card .author-experiences,
-.about-card .author-links {
-    border-top: 1px solid var(--color-card-surface-alt);
-}
-
-.about-card .interest-item {
-    border-color: var(--color-card-border);
-    color: var(--color-card-text-muted);
-}
-
-.about-card .author-experiences p,
-.about-card .author-links p {
-    color: var(--color-card-text-secondary);
-}
-
-.about-card .social-link-item a {
-    color: var(--color-card-text-secondary);
-}
-
-.about-card .social-link-item a:hover {
-    color: var(--color-accent);
-}
-
-.about-card .work-cta a {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-}
-
-.about-card .work-cta a:hover {
-    background-color: var(--color-accent);
-    color: var(--color-card-bg);
-}
-
-.about-card .author-profile-image {
-    border-color: var(--color-card-border);
-}
-
-.about-card .author-profile-image::before {
-    border-color: var(--color-card-accent);
-}
-
-.about-card .author-profile-image img {
-    background-color: var(--color-card-surface-alt);
-}
-
-.about-card .author-introduction h2::after {
-    background: var(--color-card-accent);
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-    .about-card {
-        margin: var(--space-md) auto;
-        padding: var(--space-lg) var(--space-md);
-        border-radius: 0;
-    }
-}
-
 /* ========================
    NEWSLETTER PAGE
    ======================== */
 
-.newsletter-primary-content {
+.newsletter-card { overflow: hidden; }
+
+.newsletter-primary-content,
+.newsletter-promotions {
     max-width: 720px;
     margin: 0 auto;
     padding: var(--space-xl) 0;
@@ -1089,62 +964,47 @@ input:focus-visible,
 .newsletter-primary-content::after {
     content: "";
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 0; left: 0; right: 0;
     height: 1px;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        var(--color-card-border) 15%,
-        var(--color-card-border) 85%,
-        transparent
-    );
+    background: linear-gradient(90deg, transparent, var(--color-border) 20%, var(--color-border) 80%, transparent);
 }
 
 .newsletter-primary-content::before {
-    content: "◆";
+    content: "";
     position: absolute;
-    bottom: -5px;
-    left: 50%;
+    bottom: -3px; left: 50%;
     transform: translateX(-50%);
-    font-size: 0.6rem;
-    color: var(--color-card-accent);
-    line-height: 1;
-    padding: 0 var(--space-md);
-    z-index: 1;
-    text-shadow:
-        0 0 6px var(--color-card-bg),
-        0 0 6px var(--color-card-bg),
-        0 0 10px var(--color-card-bg);
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow: 0 0 12px 2px rgba(138, 90, 46, 0.4);
 }
 
 .newsletter-primary-content h2 {
     font-size: 2rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+    font-style: italic;
+    text-transform: none;
     margin-bottom: var(--space-md);
     position: relative;
     padding-bottom: var(--space-md);
 }
 
-/* Centered variant of the gold underline ornament, since this
-   heading is center-aligned text rather than left-aligned. */
 .newsletter-primary-content h2::after {
     content: "";
     position: absolute;
-    bottom: 0;
-    left: 50%;
+    bottom: 0; left: 50%;
     transform: translateX(-50%);
-    width: 60px;
-    height: 1px;
-    background: var(--color-card-accent);
+    width: 48px; height: 2px;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent);
     opacity: 0.7;
 }
 
-.newsletter-primary-content p {
+.newsletter-primary-content p,
+.newsletter-promotions p {
     font-family: var(--font-accent);
-    font-size: 1.1rem;
+    font-style: italic;
+    font-size: 1.12rem;
     line-height: 1.8;
     color: var(--color-text-secondary);
     margin-bottom: var(--space-lg);
@@ -1160,10 +1020,6 @@ input:focus-visible,
     margin: var(--space-lg) 0;
 }
 
-/* Minimal styling for the new subscribe form added to newsletter.astro.
-   This is intentionally plain — a baseline so the form is usable, not
-   a finished design. Revisit once the real Beehiiv embed is wired in,
-   since that may come with its own markup/styling requirements. */
 .newsletter-signup {
     display: flex;
     flex-wrap: wrap;
@@ -1174,7 +1030,7 @@ input:focus-visible,
 
 .newsletter-signup input[type="email"] {
     flex: 1;
-    min-width: 200px;
+    min-width: 220px;
     max-width: 320px;
     padding: var(--space-sm) var(--space-md);
     border: 1px solid var(--color-border);
@@ -1182,8 +1038,10 @@ input:focus-visible,
     background-color: var(--color-surface);
     color: var(--color-text-primary);
     font-family: var(--font-body);
-    font-size: 0.9rem;
+    font-size: 0.92rem;
 }
+
+.newsletter-signup input[type="email"]::placeholder { color: var(--color-text-muted); }
 
 .newsletter-signup button {
     padding: var(--space-sm) var(--space-lg);
@@ -1191,119 +1049,17 @@ input:focus-visible,
     border-radius: var(--radius-pill);
     background-color: var(--color-accent);
     color: var(--color-bg);
-    font-family: var(--font-body);
+    font-family: var(--font-ui);
     font-size: 0.85rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.06em;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s var(--ease), transform 0.2s var(--ease);
 }
 
 .newsletter-signup button:hover {
     background-color: var(--color-accent-hover);
-}
-
-.newsletter-card .newsletter-signup input[type="email"] {
-    background-color: var(--color-card-bg-alt);
-    border-color: var(--color-card-border);
-    color: var(--color-card-text-muted);
-}
-
-.newsletter-promotions {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: var(--space-xl) 0;
-    position: relative;
-}
-
-.newsletter-promotions::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        var(--color-card-border) 15%,
-        var(--color-card-border) 85%,
-        transparent
-    );
-}
-
-.newsletter-promotions::before {
-    content: "◆";
-    position: absolute;
-    bottom: -5px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 0.6rem;
-    color: var(--color-card-accent);
-    line-height: 1;
-    padding: 0 var(--space-md);
-    z-index: 1;
-    text-shadow:
-        0 0 6px var(--color-card-bg),
-        0 0 6px var(--color-card-bg),
-        0 0 10px var(--color-card-bg);
-}
-
-/* Newsletter card wrapper */
-.newsletter-card {
-    background-color: var(--color-card-bg);
-    border-radius: var(--radius-md);
-    max-width: 960px;
-    margin: var(--space-xl) auto;
-    padding: var(--space-xl);
-    overflow: hidden;
-}
-
-.newsletter-card .newsletter-primary-content::after {
-    background: linear-gradient(
-        90deg,
-        transparent,
-        var(--color-card-surface-alt) 15%,
-        var(--color-card-surface-alt) 85%,
-        transparent
-    );
-}
-
-.newsletter-card .newsletter-primary-content h2 {
-    color: var(--color-card-text-primary);
-}
-
-.newsletter-card .newsletter-primary-content p {
-    color: var(--color-card-text-secondary);
-}
-
-.newsletter-card .newsletter-related-container img {
-    background-color: var(--color-card-surface-alt);
-    border-color: var(--color-card-border);
-}
-
-.newsletter-card .newsletter-promotions::after {
-    background: linear-gradient(
-        90deg,
-        transparent,
-        var(--color-card-surface-alt) 15%,
-        var(--color-card-surface-alt) 85%,
-        transparent
-    );
-}
-
-.newsletter-card .newsletter-promotions p {
-    color: var(--color-card-text-secondary);
-    font-family: var(--font-accent);
-    font-size: 1.1rem;
-}
-
-@media (max-width: 768px) {
-    .newsletter-card {
-        margin: var(--space-md) auto;
-        padding: var(--space-lg) var(--space-md);
-        border-radius: 0;
-    }
+    transform: translateY(-1px);
 }
 
 /* ========================
@@ -1312,11 +1068,8 @@ input:focus-visible,
 
 .work-content-container {
     display: grid;
-    grid-template-columns: 1fr 320px;
+    grid-template-columns: 1fr 300px;
     gap: var(--space-xl);
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: var(--space-xl) 0;
 }
 
 .main-work-content {
@@ -1336,8 +1089,8 @@ input:focus-visible,
 
 .main-work-content h2 {
     font-size: 2rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+    font-style: italic;
+    text-transform: none;
     position: relative;
     padding-bottom: var(--space-md);
 }
@@ -1345,41 +1098,36 @@ input:focus-visible,
 .main-work-content h2::after {
     content: "";
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 60px;
-    height: 1px;
-    background: var(--color-card-accent);
+    bottom: 0; left: 0;
+    width: 48px; height: 2px;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent);
     opacity: 0.7;
 }
 
 .main-work-content h3 {
-    font-size: 0.8rem;
-    letter-spacing: 0.15em;
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--color-accent);
 }
 
 .main-work-content p {
     font-family: var(--font-accent);
+    font-style: italic;
     font-size: 1.1rem;
     line-height: 1.8;
     color: var(--color-text-secondary);
 }
 
-.main-work-content a {
-    color: var(--color-accent);
-    transition: color 0.2s ease;
-}
+.main-work-content a { color: var(--color-accent); font-style: normal; }
+.main-work-content a:hover { color: var(--color-accent-hover); }
 
-.main-work-content a:hover {
-    color: var(--color-accent-hover);
-}
-
-/* Secondary sidebar */
 .secondary-work-content {
     position: sticky;
-    top: var(--space-lg);
+    top: calc(var(--space-lg) + 70px);
     height: fit-content;
 }
 
@@ -1391,8 +1139,10 @@ input:focus-visible,
 }
 
 .author-skills h3 {
-    font-size: 0.8rem;
-    letter-spacing: 0.15em;
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--color-accent);
     margin-bottom: var(--space-md);
@@ -1413,63 +1163,6 @@ input:focus-visible,
     border-left: 2px solid var(--color-accent);
 }
 
-.work-card {
-    background-color: var(--color-card-bg);
-    border-radius: var(--radius-md);
-    max-width: 960px;
-    margin: var(--space-xl) auto;
-    padding: var(--space-xl);
-}
-
-/* Override colors inside card */
-.work-card .main-work-content h2 {
-    color: var(--color-card-text-primary);
-}
-
-.work-card .main-work-content h3 {
-    color: var(--color-card-accent);
-}
-
-.work-card .main-work-content p {
-    color: var(--color-card-text-secondary);
-}
-
-.work-card .main-work-content a {
-    color: var(--color-accent);
-}
-
-.work-card .main-work-content a:hover {
-    color: var(--color-accent-hover);
-}
-
-.work-card .work-image img {
-    background-color: var(--color-card-surface-alt);
-    border-color: var(--color-card-border);
-}
-
-.work-card .author-skills {
-    background-color: var(--color-card-bg-alt);
-    border-color: var(--color-card-border);
-}
-
-.work-card .author-skills h3 {
-    color: var(--color-card-accent);
-}
-
-.work-card .skill-item {
-    background-color: var(--color-card-surface-alt);
-    border-left-color: var(--color-accent);
-    color: var(--color-card-text-muted);
-}
-
-@media (max-width: 768px) {
-    .work-card {
-        margin: var(--space-md) auto;
-        padding: var(--space-lg) var(--space-md);
-        border-radius: 0;
-    }
-}
-
 /* ========================
    404 PAGE
    ======================== */
@@ -1482,19 +1175,31 @@ input:focus-visible,
     min-height: 60vh;
     text-align: center;
     gap: var(--space-lg);
+    padding: var(--space-lg);
 }
 
 .error-container h2 {
-    font-size: 6rem;
-    letter-spacing: 0.2em;
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 5.5rem;
     color: var(--color-accent);
     line-height: 1;
+    text-shadow: 0 0 40px rgba(217, 154, 77, 0.3);
 }
 
 .error-container p {
     font-family: var(--font-accent);
-    font-size: 1.2rem;
+    font-style: italic;
+    font-size: 1.25rem;
     color: var(--color-text-secondary);
+    max-width: 40ch;
+}
+
+.error-actions {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .error-link {
@@ -1502,15 +1207,25 @@ input:focus-visible,
     padding: var(--space-sm) var(--space-lg);
     border: 1px solid var(--color-accent);
     border-radius: var(--radius-pill);
+    font-family: var(--font-ui);
     font-size: 0.8rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 0.06em;
     color: var(--color-accent);
-    transition: all 0.2s ease;
+    transition: all 0.25s var(--ease);
 }
 
 .error-link:hover {
     background-color: var(--color-accent);
+    color: var(--color-bg);
+    box-shadow: 0 8px 24px -8px rgba(217, 154, 77, 0.5);
+}
+
+.error-link-secondary { border-color: var(--color-border); color: var(--color-text-secondary); }
+
+.error-link-secondary:hover {
+    background-color: var(--color-text-secondary);
+    border-color: var(--color-text-secondary);
     color: var(--color-bg);
 }
 
@@ -1525,75 +1240,57 @@ footer {
     gap: var(--space-md);
     padding: var(--space-xl) var(--space-lg);
     border-top: 1px solid var(--color-border);
-    background-color: var(--color-surface);
+    background-color: var(--color-bg-deep);
     text-align: center;
 }
 
 .footer-brand {
     font-family: var(--font-heading);
-    font-size: 1.5rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
+    font-style: italic;
+    font-size: 1.3rem;
     color: var(--color-accent);
-    transition: color 0.2s ease;
 }
 
-.footer-brand:hover {
-    color: var(--color-accent-hover);
-}
+.footer-brand:hover { color: var(--color-accent-hover); }
 
-.footer-links {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--space-lg);
-}
+.footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-lg); }
 
 .footer-links li a {
+    font-family: var(--font-ui);
     font-size: 0.75rem;
-    letter-spacing: 0.12em;
+    font-weight: 500;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--color-text-muted);
-    transition: color 0.2s ease;
 }
 
-.footer-links li a:hover {
-    color: var(--color-accent);
-}
+.footer-links li a:hover { color: var(--color-accent); }
 
 .footer-copy {
-    font-size: 0.7rem;
-    letter-spacing: 0.08em;
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    letter-spacing: 0.03em;
     color: var(--color-text-muted);
 }
 
 /* ========================
-   PROGRESS BAR
+   READING PROGRESS BAR
    ======================== */
 
 .progress-bar {
     position: fixed;
-    top: 0;
-    left: 0;
+    top: 0; left: 0;
     height: 3px;
     width: 0%;
-    background-color: var(--color-accent);
+    background: linear-gradient(90deg, var(--color-accent), var(--color-accent-soft));
+    box-shadow: 0 0 8px rgba(217, 154, 77, 0.6);
     z-index: 999;
     transition: width 0.1s ease;
 }
 
 /* ========================
-   POST PAGE
+   POST PAGE — the reading experience
    ======================== */
-
-.post-content-card {
-    position: relative;
-    background-color: var(--color-card-bg);
-    border-radius: var(--radius-md);
-    max-width: 960px;
-    margin: var(--space-xl) auto;
-    overflow: hidden;
-}
 
 .post-header {
     text-align: center;
@@ -1602,38 +1299,38 @@ footer {
 
 .post-header h2 {
     font-family: var(--font-heading);
-    font-size: 2.8rem;
-    color: var(--color-card-text-primary);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(1.9rem, 4vw, 2.7rem);
+    color: var(--color-text-primary);
+    line-height: 1.2;
     margin-bottom: var(--space-sm);
 }
 
 .post-description {
     font-family: var(--font-accent);
-    font-size: 1.1rem;
-    color: var(--color-card-text-secondary);
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--color-text-secondary);
+    max-width: 55ch;
+    margin: 0 auto;
     position: relative;
     padding-bottom: var(--space-lg);
 }
 
-/* Centered gold ornament closing out the title block before the
-   cover image, matching the same divider language used everywhere
-   else on the site (brand banner, section headings, about page). */
 .post-description::after {
     content: "";
     position: absolute;
-    bottom: 0;
-    left: 50%;
+    bottom: 0; left: 50%;
     transform: translateX(-50%);
-    width: 60px;
-    height: 1px;
-    background: var(--color-card-accent);
+    width: 48px; height: 2px;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent);
     opacity: 0.7;
 }
 
 .post-cover-wrapper {
-    padding: 0 2rem;
+    padding: 0 var(--space-lg);
     margin-bottom: var(--space-lg);
 }
 
@@ -1641,29 +1338,202 @@ footer {
     width: 100%;
     aspect-ratio: 16/9;
     object-fit: cover;
-    background-color: var(--color-card-surface-alt);
+    background-color: var(--color-surface-alt);
     border-radius: var(--radius-sm);
     display: block;
 }
 
 .post-body {
-    padding: var(--space-xl);
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: var(--space-lg) var(--space-xl) var(--space-xl);
     font-family: var(--font-accent);
-    font-size: 1.2rem;
-    line-height: 2;
-    color: var(--color-surface);
+    font-size: 1.22rem;
+    line-height: 1.85;
+    color: var(--color-card-text-body);
 }
 
-.post-body p {
-    color: var(--color-card-text-body);
-    margin-bottom: var(--space-lg);
+.post-body p { color: var(--color-card-text-body); margin-bottom: var(--space-lg); }
+
+.post-body > p:first-of-type::first-letter {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 3.6em;
+    font-weight: 500;
+    line-height: 0.82;
+    float: left;
+    padding: 0.06em 0.08em 0 0;
+    color: var(--color-accent);
 }
 
 .post-body h2,
 .post-body h3 {
     font-family: var(--font-heading);
+    font-style: italic;
     color: var(--color-card-text-primary);
+    line-height: 1.3;
     margin: var(--space-lg) 0 var(--space-sm);
+}
+
+.post-body h2 { font-size: 1.6rem; }
+.post-body h3 { font-size: 1.3rem; }
+.post-body strong { color: var(--color-card-text-primary); }
+.post-body em { color: inherit; }
+
+.post-body a {
+    color: var(--color-card-accent);
+    text-decoration: underline;
+    text-decoration-color: rgba(138, 90, 46, 0.4);
+    text-underline-offset: 3px;
+}
+.post-body a:hover { text-decoration-color: currentColor; }
+
+.post-body ul, .post-body ol { margin: 0 0 var(--space-lg) var(--space-lg); color: var(--color-card-text-body); }
+.post-body ul { list-style: disc; }
+.post-body ol { list-style: decimal; }
+.post-body li { margin-bottom: var(--space-xs); }
+
+.post-body blockquote {
+    margin: var(--space-lg) 0;
+    padding: var(--space-md) var(--space-lg);
+    border-left: 3px solid var(--color-card-accent);
+    background-color: var(--color-card-bg-alt);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-style: italic;
+    color: var(--color-card-text-secondary);
+}
+
+.post-body img { border-radius: var(--radius-sm); margin: var(--space-lg) auto; }
+
+.post-body hr { border: none; text-align: center; margin: var(--space-xl) 0; }
+.post-body hr::after { content: "\2766"; color: var(--color-card-accent); font-size: 0.9rem; }
+
+.post-body code {
+    font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+    font-size: 0.85em;
+    background-color: var(--color-card-bg-alt);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    color: var(--color-card-text-primary);
+}
+
+/* ========================
+   POST SUBSCRIBE CTA
+   ======================== */
+
+.post-subscribe-cta {
+    max-width: 780px;
+    margin: 0 auto var(--space-xl);
+    padding: var(--space-xl) var(--space-lg);
+    text-align: center;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    position: relative;
+}
+
+.post-subscribe-cta::before {
+    content: "";
+    display: block;
+    width: 6px; height: 6px;
+    margin: 0 auto var(--space-md);
+    border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow: 0 0 12px 2px rgba(217, 154, 77, 0.5);
+}
+
+.post-subscribe-cta h3 {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 1.6rem;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-sm);
+}
+
+.post-subscribe-cta p {
+    font-family: var(--font-accent);
+    font-style: italic;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-lg);
+}
+
+.post-subscribe-link {
+    display: inline-block;
+    padding: var(--space-sm) var(--space-lg);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--color-accent);
+    transition: all 0.25s var(--ease);
+}
+
+.post-subscribe-link:hover {
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+    box-shadow: 0 10px 28px -10px rgba(217, 154, 77, 0.5);
+}
+
+/* ========================
+   POST PREV/NEXT NAV
+   ======================== */
+
+.post-nav {
+    max-width: 960px;
+    margin: 0 auto var(--space-xl);
+    padding: 0 var(--space-lg);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+}
+
+.post-nav-link {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--space-md) var(--space-lg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: border-color 0.25s var(--ease), transform 0.25s var(--ease), background-color 0.25s var(--ease);
+    min-height: 68px;
+    justify-content: center;
+}
+
+.post-nav-empty { border-color: transparent; }
+
+.post-nav-link:hover {
+    border-color: var(--color-accent);
+    background-color: var(--color-surface);
+    transform: translateY(-2px);
+}
+
+.post-nav-next { text-align: right; align-items: flex-end; }
+
+.post-nav-label {
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+}
+
+.post-nav-title {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 1.02rem;
+    color: var(--color-text-primary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+@media (max-width: 640px) {
+    .post-nav { grid-template-columns: 1fr; }
+    .post-nav-next { text-align: left; align-items: flex-start; }
 }
 
 /* ========================
@@ -1678,25 +1548,26 @@ footer {
     color: var(--color-card-bg);
     border: none;
     border-radius: 50%;
-    width: 44px;
-    height: 44px;
+    width: 46px; height: 46px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.25s var(--ease), transform 0.25s var(--ease);
     z-index: 10;
+    box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.4);
 }
 
 .audio-toggle:hover,
 .audio-toggle.active {
-    background-color: var(--color-accent);
+    background-color: var(--color-card-accent);
+    transform: scale(1.06);
 }
 
 .audio-panel {
     display: none;
     position: absolute;
-    top: calc(var(--space-lg) + 52px);
+    top: calc(var(--space-lg) + 54px);
     right: var(--space-lg);
     width: 300px;
     background-color: var(--color-card-bg-alt);
@@ -1704,47 +1575,35 @@ footer {
     border-radius: var(--radius-md);
     padding: var(--space-md);
     z-index: 10;
+    box-shadow: 0 20px 40px -16px rgba(0, 0, 0, 0.4);
 }
 
-.audio-panel.open {
-    display: block;
-}
+.audio-panel.open { display: block; }
 
-.audio-element {
-    width: 100%;
-    accent-color: var(--color-accent);
-}
+.audio-element { width: 100%; accent-color: var(--color-card-accent); }
 
 /* ========================
    MOBILE RESPONSIVENESS
    ======================== */
 
+@media (max-width: 900px) {
+    .work-content-container { grid-template-columns: 1fr; }
+    .secondary-work-content { position: static; }
+}
+
 @media (max-width: 768px) {
 
-    .container {
-        padding: var(--space-md);
-    }
+    .container, .container-full { padding: var(--space-md); }
 
-    .sidebar {
-        width: 75vw;
-        max-width: 300px;
-    }
+    .sidebar { width: 82vw; max-width: 300px; }
 
-    .main-header {
-        padding: var(--space-sm) var(--space-md);
-    }
+    .main-header { padding: var(--space-sm) var(--space-md); }
 
-    .nav-links .nav-item {
-        display: none;
-    }
+    .nav-links .nav-item { display: none; }
 
-    .brand-title {
-        font-size: 2rem;
-    }
+    .brand-title { font-size: 2.1rem; }
 
-    .brand-banner {
-        padding: var(--space-lg) var(--space-md);
-    }
+    .brand-banner { padding: var(--space-xl) var(--space-md); }
 
     .featured-posts .post-card {
         display: flex !important;
@@ -1752,70 +1611,35 @@ footer {
         min-height: auto;
     }
 
-    .featured-posts .post-grid {
-        grid-template-columns: 1fr;
-    }
+    .featured-posts .post-grid { grid-template-columns: 1fr; }
 
-    .featured-posts .card-content {
-        padding: var(--space-md);
-    }
+    .featured-posts .card-content { padding: var(--space-md); }
 
-    .featured-posts .card-content h3 {
-        font-size: 1.4rem;
-    }
+    .featured-posts .card-content h3 { font-size: 1.5rem; }
 
-    .post-grid {
-        grid-template-columns: 1fr;
-    }
+    .post-grid { grid-template-columns: 1fr; }
 
-    .author-profile-card {
-        grid-template-columns: 1fr;
-    }
+    .author-profile-card { grid-template-columns: 1fr; }
 
-    .author-profile-image img {
-        width: 100%;
-        height: 250px;
-    }
+    .author-profile-image img { width: 100%; height: 260px; }
 
-    .work-content-container {
-        grid-template-columns: 1fr;
-    }
+    .category-tags, .theme-tags { justify-content: center; }
 
-    .secondary-work-content {
-        position: static;
-    }
+    footer .footer-links { flex-direction: column; gap: var(--space-md); }
 
-    .category-tags,
-    .theme-tags {
-        justify-content: center;
-    }
+    .post-header h2 { font-size: 1.8rem; }
 
-    footer .nav-links {
-        flex-direction: column;
-        gap: var(--space-md);
-    }
+    .post-header { padding: var(--space-lg) var(--space-md); }
 
-    .post-content-card {
-        margin: var(--space-md) auto;
-        border-radius: 0;
-    }
+    .post-cover-wrapper { padding: 0 var(--space-md); }
 
-    .post-header h2 {
-        font-size: 1.8rem;
-    }
+    .post-body { padding: var(--space-md); font-size: 1.08rem; line-height: 1.85; }
 
-    .post-cover-wrapper {
-        padding: 0 var(--space-md);
-    }
+    .post-body > p:first-of-type::first-letter { font-size: 2.8em; }
 
-    .post-body {
-        padding: var(--space-md);
-        font-size: 1rem;
-        line-height: 1.9;
-    }
+    .post-nav { padding: 0 var(--space-md); }
 
-    .audio-panel {
-        width: 85vw;
-        right: var(--space-md);
-    }
+    .audio-panel { width: 85vw; right: var(--space-md); }
+
+    .work-content-container { gap: var(--space-lg); }
 }

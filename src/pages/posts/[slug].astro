@@ -4,13 +4,22 @@ import { getCollection, render } from "astro:content";
 
 export async function getStaticPaths() {
     const posts = await getCollection("posts");
-    return posts.map(post => ({
+    // Sorted newest-first once, up front, so every page's prev/next
+    // pair follows the same chronological order readers see on the
+    // homepage and recent-posts lists.
+    const sorted = [...posts].sort((a, b) => b.data.date - a.data.date);
+
+    return sorted.map((post, index) => ({
         params: { slug: post.id },
-        props: { post },
+        props: {
+            post,
+            prevPost: sorted[index + 1] ?? null, // older post
+            nextPost: sorted[index - 1] ?? null, // newer post
+        },
     }));
 }
 
-const { post } = Astro.props;
+const { post, prevPost, nextPost } = Astro.props;
 const { Content } = await render(post);
 const hasAudio = !!post.data.audio;
 ---
@@ -53,6 +62,32 @@ const hasAudio = !!post.data.audio;
         </div>
 
     </article>
+
+    <!-- Reader just finished the piece — this is the single highest-
+         intent moment on the whole site to ask them to subscribe.
+         Previously the only path to /newsletter was a small text
+         link in the footer nav, easy to miss entirely. -->
+    <section class="post-subscribe-cta">
+        <h3>Enjoyed this one?</h3>
+        <p>Get new stories, poems, and folklore notes from Coffee Break straight to your inbox.</p>
+        <a href="/newsletter" class="post-subscribe-link">Subscribe to the Newsletter</a>
+    </section>
+
+    <nav class="post-nav" aria-label="Post navigation">
+        {prevPost ? (
+            <a href={`/posts/${prevPost.id}`} class="post-nav-link post-nav-prev">
+                <span class="post-nav-label">← Older</span>
+                <span class="post-nav-title">{prevPost.data.title}</span>
+            </a>
+        ) : <span class="post-nav-link post-nav-empty" />}
+
+        {nextPost ? (
+            <a href={`/posts/${nextPost.id}`} class="post-nav-link post-nav-next">
+                <span class="post-nav-label">Newer →</span>
+                <span class="post-nav-title">{nextPost.data.title}</span>
+            </a>
+        ) : <span class="post-nav-link post-nav-empty" />}
+    </nav>
 
 </BaseLayout>
 

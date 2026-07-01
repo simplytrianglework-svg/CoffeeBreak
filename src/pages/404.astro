@@ -6,6 +6,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <div class="error-container">
         <h2>404</h2>
         <p>Looks like this page took a coffee break and never came back.</p>
-        <a href="/" class="error-link">Back to Home</a>
+        <div class="error-actions">
+            <a href="/" class="error-link">Back to Home</a>
+            <a href="/newsletter" class="error-link error-link-secondary">Browse the Newsletter</a>
+        </div>
     </div>
 </BaseLayout>

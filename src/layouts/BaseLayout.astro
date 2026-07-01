@@ -23,16 +23,17 @@ const categories = [...new Set(allPosts.map(post => post.data.category).filter(B
 
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-    <!-- Swapped Fraunces for Playfair Display. Fraunces is a fine
-         display serif but its letterforms are soft and a bit casual
-         at this weight/spacing — it read as "elegant blog" rather
-         than "regal/luxury cafe." Playfair Display has the dramatic
-         thick/thin stroke contrast associated with high-end menu and
-         packaging typography, which is the actual visual signature
-         being asked for. Pulling weights 400/500/600 plus italics
-         since headings range from the giant brand title down to
-         smaller section headers. -->
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+    <!-- Redesign: Fraunces replaces Playfair Display for headings.
+         Playfair's sharp, high-contrast strokes read as "luxury
+         menu/fashion editorial" — striking, but not what a late-
+         night story site wants. Fraunces is a warmer, more organic
+         literary serif (its italic in particular feels handwritten
+         and unhurried), which better matches "reading a story by
+         lamplight." Inter is added as a small quiet sans, used only
+         for nav labels/eyebrows/buttons, so functional UI chrome
+         stays out of the way of the serif reading voice. Lora and
+         Cormorant Garamond are kept for body text and italic accents. -->
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500;1,9..144,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 </head>
 <body>
 
