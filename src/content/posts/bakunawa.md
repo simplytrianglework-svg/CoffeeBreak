@@ -9,7 +9,7 @@ category: "Short Stories"
 layout: "../layouts/BaseLayout.astro"
 ---
 
-The blustering wind doesn’t mellow the hardened barks of trees. Mud darkening upon the somber soil, while the verdant grass remains limp.
+The blustering wind doesn’t mellow the hardened barks of trees. Mud darkening upon the wet soil, while the verdant grass remains limp.
 
 A storm passed the forgotten village, consumed by the roaring wind. The day darkens as thunder bellows, rain devours, and lightning strikes. A cacophonous orchestra. 
 
@@ -55,11 +55,11 @@ A cacophonous orchestra.
 
 “Eat us! Eat us!” The common people called out, they need a moon for their children to see. “Eat us! Eat us!” They cried, clanking their metallic pots, pans, and drums. 
 
-What they didn’t know, the Bakunawa can’t see but only hear. Yearning for the moons that glow with warm light. Yearning for the warmth it gives.
+What they didn’t know, the Bakunawa can’t see but only hear. Yearning for the moons that glow with warm light. Yearning for the warmth it gives. Never knowing that it's glittering scale can rival the dim shine of moonlight.
 
 The moon trembled as Bakunawa's jaw slackened.
 
-The people’s song of metal clangs and beating drums terrified the Bakunawa. Enraged and confused on what other kind of creature can shake heaven and earth. 
+Hearing the people’s song of metal clangs and beating drums, the Bakunawa left. Emotions of rage, fear, and confusion simmers in the Bakunawa heart. Questioning on what kind of creature can shake both heaven and earth.
 
 The Bakunawa's large tail rattled as it recoiled to cower from the sound. Hiding, plotting to come back.
 
