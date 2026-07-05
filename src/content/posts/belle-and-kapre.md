@@ -2,9 +2,9 @@
 title: "The Woman Who Courted a Kapre"
 description: "A short story about Belle, a beauty that courted a Kapre who seems tired of her attempts."
 image: "/images/bakunawa-img.webp"
-date: 2026-07-01
+date: 2026-07-06
 featured: false
-tags: ["Mythology","Folklore","Love"]
+tags: ["Folklore","Love"]
 category: "Short Stories"
 layout: "../layouts/BaseLayout.astro"
 ---

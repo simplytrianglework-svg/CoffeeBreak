@@ -4,7 +4,7 @@ description: "A short story about the moon-eating serpent."
 image: "/images/bakunawa-img.webp"
 date: 2026-07-01
 featured: true
-tags: ["Mythology","Folklore"]
+tags: ["Folklore"]
 category: "Short Stories"
 layout: "../layouts/BaseLayout.astro"
 ---

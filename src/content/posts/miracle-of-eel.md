@@ -4,7 +4,7 @@ description: "When the Japanese invaded the Philippines, the Flores family fled 
 image: "/images/MiracleOfEel.webp"
 date: 2026-07-05
 featured: false
-tags: ["Mythology","Folklore","Oral Story"]
+tags: ["Folklore","Oral Story"]
 category: "Short Stories"
 layout: "../layouts/BaseLayout.astro"
 ---

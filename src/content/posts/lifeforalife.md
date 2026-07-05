@@ -4,7 +4,7 @@ description: "A short story about the mountain god punishing a malicious soul."
 image: "/images/MountainGod.webp"
 date: 2026-07-04
 featured: false
-tags: ["Mythology","Folklore"]
+tags: ["Folklore"]
 category: "Short Stories"
 layout: "../layouts/BaseLayout.astro"
 ---

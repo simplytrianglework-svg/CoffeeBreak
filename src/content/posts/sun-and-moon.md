@@ -4,7 +4,7 @@ description: "An analysis about the origins of the Sun and Moon based on cultura
 image: "/images/TheOrigins.webp"
 date: 2026-07-01
 featured: false
-tags: ["Mythology","Folklore"]
+tags: ["Folklore"]
 category: "Analyses"
 layout: "../layouts/BaseLayout.astro"
 ---
