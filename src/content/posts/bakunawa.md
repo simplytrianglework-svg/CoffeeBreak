@@ -70,10 +70,10 @@ Korona sang amon hari.”
 
 The people sang their tradition, to play the metal pans and drums because the lunar cycle never ends while The Bakunawa still yearns for the moon.
 
-Author’s Note:
+### Author’s Note:
 The tale of Bakunawa originated from Western Visayas, specifically Hiligaynon—however, many regions within Southern Philippines have different retellings of the Bakunawa, the only thing that is consistent is how to drive the Bakunawa away.  
 
-Common English Translation:  
+### Common English Translation:  
 Our moon long ago, long ago  
 Was eaten by the bakunawa  
 Please have pity, return it, return it  
