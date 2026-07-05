@@ -1,7 +1,7 @@
 ---
 title: "The Origins of the Sun and Moon : An Analysis of Cultural Variations"
 description: "An analysis about the origins of the Sun and Moon based on cultural beliefs, folklore, and mythology"
-image: "/images/sun-and-moon.jpg"
+image: "/images/TheOrigins.webp"
 date: 2026-07-01
 featured: false
 tags: ["Mythology","Folklore"]
