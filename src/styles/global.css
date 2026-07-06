@@ -410,6 +410,20 @@ input:focus-visible,
 .nav-item a[aria-current="page"] { color: var(--color-accent); }
 .nav-item a[aria-current="page"]::before { right: 0; opacity: 0.7; }
 
+.nav-cta a {
+    padding: var(--space-xs) var(--space-md);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-pill);
+    color: var(--color-accent);
+}
+
+.nav-cta a:hover {
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+}
+
+.nav-cta a::before { content: none; }
+
 .hamburger {
     font-size: 1.3rem;
     padding: var(--space-xs) var(--space-sm);
